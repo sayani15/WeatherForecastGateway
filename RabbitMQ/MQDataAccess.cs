@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using WeatherForecastGateway.Gateway;
 using WeatherForecastGateway.Models;
 
@@ -50,8 +48,6 @@ namespace WeatherForecastGateway.RabbitMQ
 			}
 			_channel.BasicAck(deliveryTag, false);
             Console.WriteLine("message acknowledged");
-
-
         }
 
 		public async void ProcessMessage(MQMessage message)
@@ -65,14 +61,6 @@ namespace WeatherForecastGateway.RabbitMQ
 		{
 			var byteArray = Encoding.Default.GetBytes(JsonConvert.SerializeObject(message));
 			_channel.BasicPublish( "Weather-Forecast-Exchange", "response.forecast", body: byteArray);
-		}
-
-		public void CheckConnection()
-		{
-			//if (!_channel.IsOpen)
-			//{
-			//	CreateConnection();
-			//}
 		}
 	}
 }
