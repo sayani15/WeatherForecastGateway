@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using WeatherForecastGateway.Gateway;
@@ -6,17 +7,20 @@ using WeatherForecastGateway.Models;
 
 namespace WeatherForecastGateway.RabbitMQ
 {
-	public class MQDataAccess : DefaultBasicConsumer
+	public class MQDataAccess : DefaultBasicConsumer, IMQDataAccess
 	{
 		private IModel _channel;
-		private GatewayService _gatewayService;
+		private readonly IAppSettings _appSettings;
+		private readonly IGatewayService _gatewayService;
 
-        public MQDataAccess()
-        {
-			_gatewayService = new GatewayService();
-        }
-        public void CreateConnection() 
+		public MQDataAccess(IAppSettings appSettings, IGatewayService gatewayService)
 		{
+			_gatewayService = gatewayService;
+			_appSettings = appSettings;
+		}
+		public void CreateConnection()
+		{
+			var hostName = _appSettings.GetStringSetting("MQHostName");
 			var factory = new ConnectionFactory()
 			{
 				HostName = "127.0.0.1",
@@ -44,11 +48,11 @@ namespace WeatherForecastGateway.RabbitMQ
 			}
 			catch (Exception e)
 			{
-                Console.WriteLine(e); 
+				Console.WriteLine(e);
 			}
 			_channel.BasicAck(deliveryTag, false);
-            Console.WriteLine("message acknowledged");
-        }
+			Console.WriteLine("message acknowledged");
+		}
 
 		public async void ProcessMessage(MQMessage message)
 		{
@@ -60,7 +64,7 @@ namespace WeatherForecastGateway.RabbitMQ
 		public void SendMessage(APIResponse message)
 		{
 			var byteArray = Encoding.Default.GetBytes(JsonConvert.SerializeObject(message));
-			_channel.BasicPublish( "Weather-Forecast-Exchange", "response.forecast", body: byteArray);
+			_channel.BasicPublish("Weather-Forecast-Exchange", "response.forecast", body: byteArray);
 		}
 	}
 }

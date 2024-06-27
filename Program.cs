@@ -1,9 +1,17 @@
 ﻿using WeatherForecastGateway.RabbitMQ;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using WeatherForecastGateway.Gateway;
+using WeatherForecastGateway;
 
-var mQDataAccess = new MQDataAccess();
-mQDataAccess.CreateConnection();
 
-while (true)
+var host = Host.CreateDefaultBuilder().ConfigureServices((context, services) =>
 {
-	Thread.Sleep(5000);
-}
+	services.AddSingleton<IGatewayService, GatewayService>();
+	services.AddSingleton<IMQDataAccess, MQDataAccess>();
+	services.AddSingleton<IAppSettings, AppSettings>();
+}).Build();
+
+var svc = ActivatorUtilities.CreateInstance<Startup>(host.Services);
+svc.Run();
+

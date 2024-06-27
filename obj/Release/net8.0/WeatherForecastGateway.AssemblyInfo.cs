@@ -13,7 +13,7 @@ using System.Reflection;
 
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("8358b040-ef3c-4ca5-aa5a-827f2a86d459")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("WeatherForecastGateway")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9a28a7bed9d2c3a8f77f613957c5ecc1acdaa1cc")]
 [assembly: System.Reflection.AssemblyProductAttribute("WeatherForecastGateway")]
